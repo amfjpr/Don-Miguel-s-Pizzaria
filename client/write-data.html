@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter Data</title>
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/write-data.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>MIGUEL'S PIZZERIA</h1>
+  </header>
+
+  <nav class="menubar">
+    <a href="home.html">HOME</a>
+    <a href="write-data.html">ENTER DATA</a>
+    <a href="view-data.html">VIEW DATA</a>
+    <a href="browse.html">BROWSE DATA</a>
+  </nav>
+
+  <div class="bg"></div>
+
+  <main class="form-card">
+    <h2>Input Order Data</h2>
+    <form id="orderForm" class="form-grid">
+      <label for="orderId">Order ID</label>
+      <input id="orderId" name="orderId" type="text" placeholder="ex: ORD-1001">
+
+      <label for="customer">Customer</label>
+      <input id="customer" name="customer" type="text" placeholder="Customer name">
+
+      <label for="pizza">Pizza</label>
+      <input id="pizza" name="pizza" type="text" placeholder="e.g., Margherita">
+
+      <label for="size">Size</label>
+      <select id="size" name="size">
+        <option value="Small">Small</option>
+        <option value="Medium" selected>Medium</option>
+        <option value="Large">Large</option>
+      </select>
+
+      <label for="price">Price ($)</label>
+      <input id="price" name="price" type="number" step="0.01" placeholder="e.g., 14.99">
+    </form>
+    <div class="actions">
+      <button id="submitBtn">Submit</button>
+      <button id="clearBtn" type="button">Clear</button>
+    </div>
+  </main>
+
+  <script src="js/write-data.js"></script>
+</body>
+</html>

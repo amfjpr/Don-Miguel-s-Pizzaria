@@ -1,0 +1,10 @@
+/* Call the page write-data.html - styles for the input page */
+
+.form-card { max-width: 760px; margin: 40px auto; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+.form-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 12px 18px; align-items: center; }
+label { font-weight: 600; }
+input, select { padding: 8px; border: 1px solid #ccc; border-radius: 8px; }
+.actions { display: flex; gap: 12px; margin-top: 18px; }
+button { padding: 10px 16px; border: 0; border-radius: 10px; cursor: pointer; }
+button#submitBtn { background: #1a3cff; color: white; }
+button#clearBtn { background: #b82828; color: white; }

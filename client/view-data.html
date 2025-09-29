@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Data</title>
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/view-data.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>MIGUEL'S PIZZERIA</h1>
+  </header>
+
+  <nav class="menubar">
+    <a href="home.html">HOME</a>
+    <a href="write-data.html">ENTER DATA</a>
+    <a href="view-data.html">VIEW DATA</a>
+    <a href="browse.html">BROWSE DATA</a>
+  </nav>
+
+  <div class="bg"></div>
+
+  <main class="table-card">
+    <h2>View Orders (JSON)</h2>
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>orderId</th>
+          <th>customer</th>
+          <th>pizza</th>
+          <th>size</th>
+          <th>price</th>
+        </tr>
+      </thead>
+      <tbody id="libraryTable"></tbody>
+    </table>
+  </main>
+
+  <script src="js/view-data.js"></script>
+</body>
+</html>

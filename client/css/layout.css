@@ -1,0 +1,57 @@
+/* Main */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Red header */
+.topbar {
+  background: red;
+  color: white;
+  text-align: center;
+  padding: 15px;
+}
+.topbar h1 {
+  margin: 0;
+  font-size: 40px;
+  text-transform: uppercase;
+}
+
+/* Menu */
+.menubar {
+  background: white;
+  text-align: center;
+  padding: 10px;
+}
+.menubar a {
+  color: blue;
+  font-weight: bold;
+  text-decoration: underline;
+  margin: 0 10px;
+}
+
+/* Background with image */
+.bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url("../images/logo.webp");
+  background-size: small;
+  z-index: -1;
+}
+
+/* Card central */
+.center-card {
+  max-width: 800px;
+  margin: 50px auto;
+  background: white;
+  text-align: center;
+  padding: 20px;
+}
+.center-card h2 {
+  color: green;
+  font-size: 40px;
+}
+.center-card p {
+  color: green;
+  font-size: 20px;
+}
