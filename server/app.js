@@ -21,7 +21,13 @@ const port = 5000;
 
 // Page listeners (our router)
 
+var router = require('./router');
+router(app);
+
 // Service listeners ( our data processes)
+
+var services = require('./services');
+services(app);
 
 // Listen
 var server = app.listen (port, function(err){
