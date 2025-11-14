@@ -4,27 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Enter Data</title>
-   <link rel="stylesheet" href="/client/css/layout.css">
-  <link rel="stylesheet" href="/client/css/layout.css">
-  <link rel="stylesheet" href="/client/css/write-data.css">
-  
-  <script src="js/write-data.js"> async </script>
-  <script src="js/config.js"></script>
-
-
-
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/write-data.css">
 </head>
-
 <body>
   <header class="topbar">
     <h1>MIGUEL'S PIZZERIA</h1>
   </header>
 
   <nav class="menubar">
-    <a href='/'>HOME</a>
-    <a href='/write-data'>ENTER DATA</a>
-    <a href='/view-data'>VIEW DATA</a>
-    <a href='/browse.html'>BROWSE DATA</a>
+    <a href="home.html">HOME</a>
+    <a href="write-data.html">ENTER DATA</a>
+    <a href="view-data.html">VIEW DATA</a>
+    <a href="browse.html">BROWSE DATA</a>
   </nav>
 
   <div class="bg"></div>
@@ -32,26 +24,40 @@
   <main class="form-card">
     <h2>Input Order Data</h2>
     <form id="orderForm" class="form-grid">
+
+      <input type="hidden" id="id">
+
       <label for="orderId">Order ID</label>
-      <input id="orderId" name="orderId" type="text" placeholder="ex: ORD-1001">
+      <input id="orderId" name="orderId" type="text">
 
       <label for="customer">Customer</label>
-      <input id="customer" name="customer" type="text" placeholder="Customer name">
+      <input id="customer" name="customer" type="text">
 
       <label for="pizza">Pizza</label>
-      <input id="pizza" name="pizza" type="text" placeholder="e.g., Margherita">
+      <input id="pizza" name="pizza" type="text">
 
       <label for="size">Size</label>
-      <input id="size" name="size" type="text" placeholder="e.g., Small, Medium or Large">
-  
+      <select id="size" name="size">
+        <option value="Small">Small</option>
+        <option value="Medium" selected>Medium</option>
+        <option value="Large">Large</option>
+      </select>
+
       <label for="price">Price ($)</label>
-      <input id="price" name="price" type="number" step="0.01" placeholder="e.g., 14.99">
+      <input id="price" name="price" type="number" step="0.01">
+
     </form>
+
     <div class="actions">
       <button id="submitBtn">Submit</button>
       <button id="clearBtn" type="button">Clear</button>
     </div>
   </main>
- 
+
+  <script>
+    var pizzaURL = window.pizzaURL || location.origin;
+    window.pizzaURL = pizzaURL;
+  </script>
+  <script src="js/write-data.js"></script>
 </body>
 </html>

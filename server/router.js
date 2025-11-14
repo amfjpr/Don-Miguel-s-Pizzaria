@@ -1,30 +1,28 @@
 const path = require('path');
 
-// Function to hold all our page listeners
-
+// function to hold all the page routes
 var router = function(app) {
 
-app.get('/', function(req, res) {
-        res.sendFile(path.join(__dirname + "/../client/home.html"));
+  // home page route
+  app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname + "/../client/home.html"));
+  });
 
-    });
+  // view data page route
+  app.get('/view-data', function(req, res) {
+    res.sendFile(path.join(__dirname + "/../client/view-data.html"));
+  });
 
-app.get('/view-data', function(req, res) {
-        res.sendFile(path.join(__dirname + "/../client/view-data.html"));
+  // write data page route
+  app.get('/write-data', function(req, res) {
+    res.sendFile(path.join(__dirname + "/../client/write-data.html"));
+  });
 
-    });
-
-app.get('/write-data', function(req, res) {
-       res.sendFile(path.join(__dirname + "/../client/write-data.html"));
-
-    });
-
-app.get('/write-data', function(req, res) {
-       res.sendFile(path.join(__dirname + "/../client/browse.html"));
-
-    });
-
-
+  // extra browse page route
+  app.get('/browse', (req, res) => {
+    res.sendFile(path.join(__dirname + "/../client/browse.html"));
+  });
 }
 
-module.exports = router;
+module.exports = router; // export the router so app.js can use it
+

@@ -5,33 +5,30 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+// allow requests from other origins
 app.use(cors());
 
-app.use(function(req,res,next) {
-    res.header('Acess-Control-Allow-Origin', '*');
-    next();
-
-});
-
+// allow server to read JSON data
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:false}));
+
+// allow server to read form data (POST)
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// serve static files from the client folder
 app.use("/client", express.static(path.resolve(__dirname + "/../client/")));
+app.use(express.static(path.resolve(__dirname + "/../client/")));
 
-const port = 5000;
-
-// Page listeners (our router)
-
-var router = require('./router');
+// load page routes
+const router = require('./router');
 router(app);
 
-// Service listeners ( our data processes)
-
-var services = require('./services');
+// load service endpoints (like write-record)
+const services = require('./services');
 services(app);
 
-// Listen
-var server = app.listen (port, function(err){
-    if(err) throw err;
-
-    console.log("Listening on port: " + port);
+// start the server on port 5000
+const port = 5000;
+app.listen(port, err => {
+  if (err) throw err; // show error if server fails
+  console.log("Listening on port: " + port); // message to show server is running
 });
