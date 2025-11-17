@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
       price: price
     };
 
-    fetch(window.pizzaURL + "/write-record", {
+    fetch(pizzaURL + "/write-record", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -66,4 +66,3 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
-

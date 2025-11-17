@@ -10,12 +10,6 @@
 // global object that will hold the list of orders
 var jsonObject = [];
 
-// make sure pizzaURL exists (same ideia do write-data.js)
-if (typeof window.pizzaURL === "undefined" || !window.pizzaURL) {
-  window.pizzaURL = location.origin;
-}
-
-// this starts the program when the page loads
 main();
 
 // main function that runs everything
@@ -23,15 +17,13 @@ function main() {
     console.log(jsonObject); // shows the whole object in the console
     console.log(jsonObject.length); // shows how many items are in the list
     console.log(JSON.stringify(jsonObject)); // shows the data as one long text
-
-    // get the data from the database
     retrieveData();
 }
 
-// function that gets the data from the server
+
 function retrieveData() {
-    // Get the data from the database
-    fetch(window.pizzaURL + "/get-records", {
+
+    fetch(pizzaURL + "/get-records", {
         method: "GET"
     }) 
     .then(response => {
@@ -50,7 +42,7 @@ function retrieveData() {
     });
 }
 
-// this function receives the data from the server and builds the table
+
 function createPizzaTable(pizzaList) {
     jsonObject = pizzaList || [];
 
@@ -58,14 +50,14 @@ function createPizzaTable(pizzaList) {
     console.log(jsonObject.length); 
     console.log(JSON.stringify(jsonObject)); 
 
-    showTable(); // call the function that builds the table
+    showTable();
 }
 
-// function to show the data in a table on the page
-function showTable() {
-    var htmlString = ""; // start with an empty string
 
-    // go through each item in the list
+function showTable() {
+    var htmlString = ""; 
+
+
     for (var i = 0; i < jsonObject.length; i++) {
         htmlString += "<tr>";
         htmlString += "<td>" + jsonObject[i].orderID + "</td>";
@@ -73,32 +65,29 @@ function showTable() {
         htmlString += "<td>" + jsonObject[i].pizza + "</td>";
         htmlString += "<td>" + jsonObject[i].size + "</td>";
 
-        // make sure price has two decimal numbers
+
         var price = jsonObject[i].price;
         if (typeof price === "number") {
             price = price.toFixed(2);
         }
         htmlString += "<td>" + price + "</td>";
 
-        // ⬇⬇⬇ NEW: Delete button with class and data-id (record ID)
         htmlString += '<td><button class="delete-button" data-id="' + jsonObject[i].id + '">Delete</button></td>';
 
         htmlString += "</tr>";
     }
 
-    // find the table body in the HTML and put the rows inside
     var tableBodyObj = document.getElementById("libraryTable");
     tableBodyObj.innerHTML = htmlString;
 
-    // ⬇⬇⬇ NEW: After creating the table, activate the delete buttons.
     activateDelete();
 }
 
-// this function is just for testing – it adds two new orders
+
 function refreshTable() {
     console.log("refreshTable() called");
 
-    // first new order
+
     var newOrder = { 
         orderID: "ORD-2001", 
         customer: "Agenor", 
@@ -108,7 +97,7 @@ function refreshTable() {
     };
     jsonObject.push(newOrder);
 
-    // second new order
+
     var anotherOrder = {};
     anotherOrder.orderID = "ORD-2002";
     anotherOrder.customer = "Heloisa";
@@ -116,10 +105,8 @@ function refreshTable() {
     anotherOrder.size = "Medium";
     anotherOrder.price = 16.75;
 
-    // add both to the list
     jsonObject.push(anotherOrder);
 
-    // show the updated table
     showTable();
 }
 
@@ -132,14 +119,14 @@ function activateDelete() {
     deleteButtons.forEach(button => {
         button.addEventListener('click', function() {
             const deleteID = this.getAttribute("data-id");  // <-- from the html button object
-            handleDelete(deleteID);  //You will write this function.
+            handleDelete(deleteID);  
         });
     });
 }
 
 // function to call the DELETE service on the server
 function handleDelete(deleteID) {
-    fetch(window.pizzaURL + "/delete-record", {
+    fetch(pizzaURL + "/delete-record", {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"
@@ -154,7 +141,7 @@ function handleDelete(deleteID) {
     })
     .then(data => {
         if (data.msg === "SUCCESS") {
-            // reload the data from the server
+
             retrieveData();
         } else {
             alert("Error: " + (data.error || "Unknown error"));
@@ -164,4 +151,3 @@ function handleDelete(deleteID) {
         alert("Error: " + err);
     });
 }
-
