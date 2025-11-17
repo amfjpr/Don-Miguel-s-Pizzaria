@@ -24,6 +24,12 @@ function main() {
     console.log(jsonObject.length); // shows how many items are in the list
     console.log(JSON.stringify(jsonObject)); // shows the data as one long text
 
+    // get the data from the database
+    retrieveData();
+}
+
+// function that gets the data from the server
+function retrieveData() {
     // Get the data from the database
     fetch(window.pizzaURL + "/get-records", {
         method: "GET"
@@ -73,12 +79,19 @@ function showTable() {
             price = price.toFixed(2);
         }
         htmlString += "<td>" + price + "</td>";
+
+        // ⬇⬇⬇ NEW: Delete button with class and data-id (record ID)
+        htmlString += '<td><button class="delete-button" data-id="' + jsonObject[i].id + '">Delete</button></td>';
+
         htmlString += "</tr>";
     }
 
     // find the table body in the HTML and put the rows inside
     var tableBodyObj = document.getElementById("libraryTable");
     tableBodyObj.innerHTML = htmlString;
+
+    // ⬇⬇⬇ NEW: After creating the table, activate the delete buttons.
+    activateDelete();
 }
 
 // this function is just for testing – it adds two new orders
@@ -109,3 +122,46 @@ function refreshTable() {
     // show the updated table
     showTable();
 }
+
+// function from professor to activate delete buttons
+function activateDelete() {
+    // Capture all html items tagged with the delete-button class
+    const deleteButtons = document.querySelectorAll('.delete-button');
+
+    //Loop through all the deleteButtons and create a listener for each one
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const deleteID = this.getAttribute("data-id");  // <-- from the html button object
+            handleDelete(deleteID);  //You will write this function.
+        });
+    });
+}
+
+// function to call the DELETE service on the server
+function handleDelete(deleteID) {
+    fetch(window.pizzaURL + "/delete-record", {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id: deleteID })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Network response was not ok " + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.msg === "SUCCESS") {
+            // reload the data from the server
+            retrieveData();
+        } else {
+            alert("Error: " + (data.error || "Unknown error"));
+        }
+    })
+    .catch(err => {
+        alert("Error: " + err);
+    });
+}
+

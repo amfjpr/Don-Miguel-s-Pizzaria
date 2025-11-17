@@ -43,11 +43,35 @@ var services = function (app) {
     }
   });
 
+  // ⬇⬇⬇ NEW – DELETE service requested in Assignment 4.2
+  app.delete("/delete-record", function (req, res) {
+    var deleteID = req.body.id;
+    var pizzaData = [];
+
+    if (fs.existsSync(database_file)) {
+      var data = fs.readFileSync(database_file, "utf-8");
+      if (data) {
+        pizzaData = JSON.parse(data);
+      }
+
+      for (var i = 0; i < pizzaData.length; i++) {
+        if (pizzaData[i].id === deleteID) {
+          pizzaData.splice(i, 1);
+          break;
+        }
+      }
+
+      fs.writeFileSync(database_file, JSON.stringify(pizzaData));
+      res.json({ msg: "SUCCESS" });
+    } else {
+      res.json({ msg: "ERROR", error: "Database file not found" });
+    }
+  });
+
+
 };
 
 module.exports = services;
-
-
 
 
 
