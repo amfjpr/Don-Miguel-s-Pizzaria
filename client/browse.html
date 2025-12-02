@@ -1,35 +1,60 @@
-<!-- Professor I'm still working in this page!
- 
-Agenor Martins
--->
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>View Data</title>
-  <link rel="stylesheet" href="/client/css/layout.css">
-  <link rel="stylesheet" href="/client/css/layout.css">
-  <link rel="stylesheet" href="/client/css/view-data.css">
-<!-- I need to create .css browse.css-->
-  
+  <head>
+    <title>Browse Data</title>
 
-</head>
-<body>
-  <header class="topbar">
-    <h1>MIGUEL'S PIZZERIA</h1>
-  </header>
+    <link rel="stylesheet" href="/client/css/layout.css">
+    <link rel="stylesheet" href="/client/css/view-data.css">
+    <link rel="stylesheet" href="browse-data.css">
 
-  <nav class="menubar">
-   <a href='/'>HOME</a>
-    <a href='/write-data'>ENTER DATA</a>
-    <a href='/view-data'>VIEW DATA</a>
-    <a href='/browse.html'>BROWSE DATA</a>
-  </nav>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="browse-data.js"></script>
+  </head>
 
-  </main>
+  <body ng-app="browseDataApp" ng-controller="browseDataCtrl">
+    <header class="topbar">
+      <h1>MIGUEL'S PIZZERIA</h1>
+    </header>
 
- 
-</body>
-</html>
+    <nav class="menubar">
+      <a href="/">HOME</a>
+      <a href="/write-data">ENTER DATA</a>
+      <a href="/view-data">VIEW DATA</a>
+      <a href="/browse.html">BROWSE DATA</a>
+    </nav>
+
+    <div style="font-size: 24px; margin: 40px">
+      <div>
+        <label for="orderID">Order ID: </label>
+        <label id="orderID" style="margin-left: 30px; color: blue">{{obj.orderID}}</label>
+      </div>
+      <div>
+        <label for="customer">Customer: </label>
+        <label id="customer" style="margin-left: 30px; color: blue">{{obj.customer}}</label>
+      </div>
+      <div>
+        <label for="pizza">Pizza: </label>
+        <label id="pizza" style="margin-left: 30px; color: blue">{{obj.pizza}}</label>
+      </div>
+      <div>
+        <label for="size">Size: </label>
+        <label id="size" style="margin-left: 30px; color: blue">{{obj.size}}</label>
+      </div>
+      <div>
+        <label for="price">Price: </label>
+        <label id="price" style="margin-left: 30px; color: blue">${{obj.price}}</label>
+      </div>
+
+    <div style="float: left; margin-top: 30px">
+    <div style="float: left;">
+        <button id="previous" ng-click="changeRecord(-1)" ng-hide="hidePrev">
+            &lt;&lt;&lt; Previous
+        </button>
+    </div>
+
+    <div style="float: left; margin-left: 20px;">
+        <button id="next" ng-click="changeRecord(1)" ng-hide="hideNext">
+            Next &gt;&gt;&gt;
+        </button>
+    </div>
+</div>
