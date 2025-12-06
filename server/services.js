@@ -1,108 +1,110 @@
-const fs = require("fs");
-const path = require("path");
+//Bring in Mongo
+const { MongoClient, ObjectId } = require('mongodb');
 
-const database_file = path.join(__dirname + "/files/data.txt");
+//Define Database URL
+const dbURL = "mongodb://127.0.0.1";
 
-var services = function (app) {
+//Define the database server
+const client = new MongoClient(dbURL);
 
-  app.post("/write-record", function (req, res) {
-    var id = "lib" + Date.now();
+var services = function(app) {
 
-    var newpizzaData = {
-      id: id,
-      orderID: req.body.orderID,
-      customer: req.body.customer,
-      pizza: req.body.pizza,
-      size: req.body.size,
-      price: req.body.price
-    };
+  
+    // POST: write-record  (add new pizza order)
+  
+    app.post('/write-record', async function(req, res) {
 
-    if (fs.existsSync(database_file)) {
-      fs.readFile(database_file, "utf-8", function (err, data) {
-        if (err) {
-          res.send(JSON.stringify({ msg: err }));
-        } else {
-          var pizzaData = [];
-          if (data) pizzaData = JSON.parse(data);
+        //1. Bring in the data from the client
+        var orderIDSentFromClient  = req.body.orderID;
+        var customerSentFromClient = req.body.customer;
+        var pizzaSentFromClient    = req.body.pizza;
+        var sizeSentFromClient     = req.body.size;
+        var priceSentFromClient    = req.body.price;
 
-          pizzaData.push(newpizzaData);
+        //2. Create JSON with data to be inserted
+        var newPizzaOrder = {
+            orderID:  orderIDSentFromClient,
+            customer: customerSentFromClient,
+            pizza:    pizzaSentFromClient,
+            size:     sizeSentFromClient,
+            price:    priceSentFromClient
+        };
 
-          fs.writeFile(database_file, JSON.stringify(pizzaData), function (err) {
-            if (err) {
-              res.send(JSON.stringify({ msg: err }));
-            } else {
-              res.send(JSON.stringify({ msg: "SUCCESS" }));
-            }
-          });
+        //3. Connect and insert data, close database, return success or failure
+        try {
+            const conn = await client.connect();
+            const db   = conn.db("pizzaria");
+            const coll = db.collection("orders");
+
+            await coll.insertOne(newPizzaOrder);
+
+            await conn.close();
+            return res.json({ msg: "SUCCESS" });
+
+        } catch (err) {
+            return res.json({ msg: "Error: " + err });
         }
-      });
-    } else {
-      var pizzaData = [newpizzaData];
 
-      fs.writeFile(database_file, JSON.stringify(pizzaData), function (err) {
-        if (err) {
-          res.send(JSON.stringify({ msg: err }));
-        } else {
-          res.send(JSON.stringify({ msg: "SUCCESS" }));
+    });
+
+ 
+    // GET: get-records  (get all pizza orders)
+
+    app.get('/get-records', async function(req, res) {
+
+        //1. Set up sort by orderID ascending
+        const orderBy = { orderID: 1 };
+
+        //2. Connect, find data, close database, return results or error 
+        try {
+            const conn = await client.connect();
+            const db   = conn.db("pizzaria");
+            const coll = db.collection("orders");
+
+            const pizzaData = await coll.find().sort(orderBy).toArray();
+
+            await conn.close();
+            return res.json({ msg: "SUCCESS", fredData: pizzaData });
+
+        } catch (err) {
+            return res.json({ msg: "Error: " + err });
         }
-      });
-    }
-  });
 
-  app.get("/get-records", function (req, res) {
-    if (fs.existsSync(database_file)) {
-      fs.readFile(database_file, "utf-8", function (err, data) {
-        if (err) {
-          res.send(JSON.stringify({ msg: err }));
-        } else {
-          var pizzaData = [];
-          if (data) pizzaData = JSON.parse(data);
+    });
 
-          res.json({ msg: "SUCCESS", fredData: pizzaData });
+    // DELETE: delete-record  (delete one pizza order by _id)
+
+    app.delete('/delete-record', async function(req, res) {
+
+        //1. Bring in the data from the client (ID sent via query)
+        var idSentFromClient = req.query.recordID;
+
+        //2. Convert id string to a Mongo ObjectId
+        var idAsMongoObject = ObjectId.createFromHexString(idSentFromClient);
+
+        //3. Create search with MongoID
+        const search = { _id: idAsMongoObject };
+
+        //4. Connect and delete data, close database, return success or failure
+        try {
+            const conn = await client.connect();
+            const db   = conn.db("pizzaria");
+            const coll = db.collection("orders");
+
+            await coll.deleteOne(search);
+
+            await conn.close();
+            return res.json({ msg: "SUCCESS" });
+
+        } catch (err) {
+            return res.json({ msg: "Error: " + err });
         }
-      });
-    } else {
-      res.json({ msg: "SUCCESS", fredData: [] });
-    }
-  });
 
-  app.delete("/delete-record", function (req, res) {
-    var deleteID = req.body.id;
-
-    if (fs.existsSync(database_file)) {
-      fs.readFile(database_file, "utf-8", function (err, data) {
-        if (err) {
-          res.json({ msg: err });
-        } else {
-          var pizzaData = [];
-          if (data) pizzaData = JSON.parse(data);
-
-          for (var i = 0; i < pizzaData.length; i++) {
-            if (pizzaData[i].id === deleteID) {
-              pizzaData.splice(i, 1);
-              break;
-            }
-          }
-
-          fs.writeFile(database_file, JSON.stringify(pizzaData), function (err) {
-            if (err) {
-              res.json({ msg: err });
-            } else {
-              res.json({ msg: "SUCCESS" });
-            }
-          });
-        }
-      });
-    } else {
-      res.json({ msg: "ERROR", error: "Database file not found" });
-    }
-  });
+    });
 
 };
 
 module.exports = services;
-
-
 
 
 

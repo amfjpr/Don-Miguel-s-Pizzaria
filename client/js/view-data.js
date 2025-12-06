@@ -20,7 +20,6 @@ function main() {
     retrieveData();
 }
 
-
 function retrieveData() {
 
     fetch(pizzaURL + "/get-records", {
@@ -42,7 +41,6 @@ function retrieveData() {
     });
 }
 
-
 function createPizzaTable(pizzaList) {
     jsonObject = pizzaList || [];
 
@@ -53,10 +51,8 @@ function createPizzaTable(pizzaList) {
     showTable();
 }
 
-
 function showTable() {
     var htmlString = ""; 
-
 
     for (var i = 0; i < jsonObject.length; i++) {
         htmlString += "<tr>";
@@ -65,14 +61,13 @@ function showTable() {
         htmlString += "<td>" + jsonObject[i].pizza + "</td>";
         htmlString += "<td>" + jsonObject[i].size + "</td>";
 
-
         var price = jsonObject[i].price;
         if (typeof price === "number") {
             price = price.toFixed(2);
         }
         htmlString += "<td>" + price + "</td>";
-
-        htmlString += '<td><button class="delete-button" data-id="' + jsonObject[i].id + '">Delete</button></td>';
+    
+        htmlString += '<td><button class="delete-button" data-id="' + jsonObject[i]._id + '">Delete</button></td>';
 
         htmlString += "</tr>";
     }
@@ -83,10 +78,8 @@ function showTable() {
     activateDelete();
 }
 
-
 function refreshTable() {
     console.log("refreshTable() called");
-
 
     var newOrder = { 
         orderID: "ORD-2001", 
@@ -96,7 +89,6 @@ function refreshTable() {
         price: 19.90 
     };
     jsonObject.push(newOrder);
-
 
     var anotherOrder = {};
     anotherOrder.orderID = "ORD-2002";
@@ -126,12 +118,9 @@ function activateDelete() {
 
 // function to call the DELETE service on the server
 function handleDelete(deleteID) {
-    fetch(pizzaURL + "/delete-record", {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ id: deleteID })
+
+    fetch(pizzaURL + "/delete-record?recordID=" + deleteID, {
+        method: "DELETE"
     })
     .then(response => {
         if (!response.ok) {
@@ -141,7 +130,6 @@ function handleDelete(deleteID) {
     })
     .then(data => {
         if (data.msg === "SUCCESS") {
-
             retrieveData();
         } else {
             alert("Error: " + (data.error || "Unknown error"));
