@@ -4,25 +4,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>View Data</title>
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/view-data.css">
+
+  <link rel="stylesheet" href="/client/css/layout.css">
+  <link rel="stylesheet" href="/client/css/view-data.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <script src="/client/js/view-data.js"></script>
 </head>
-<body>
+
+<body ng-app="viewDataApp" ng-controller="viewDataCtrl">
   <header class="topbar">
     <h1>MIGUEL'S PIZZERIA</h1>
   </header>
 
   <nav class="menubar">
-    <a href="home.html">HOME</a>
-    <a href="write-data.html">ENTER DATA</a>
-    <a href="view-data.html">VIEW DATA</a>
-    <a href="browse.html">BROWSE DATA</a>
+    <a href="/">HOME</a>
+    <a href="/write-data">ENTER DATA</a>
+    <a href="/view-data">VIEW DATA</a>
+    <a href="/browse">BROWSE DATA</a>
   </nav>
 
   <div class="bg"></div>
 
   <main class="table-card">
-    <h2>View Orders (JSON)</h2>
+    <h2>View Orders</h2>
+
+    <div style="margin: 12px 0; display:flex; gap:12px; align-items:center;">
+      <label style="font-weight:600;">Type (Category):</label>
+      <select ng-model="selectedType" ng-change="getByType()">
+        <option value="ALL">ALL</option>
+        <option value="Classic">Classic</option>
+        <option value="Special">Special</option>
+        <option value="Veggie">Veggie</option>
+        <option value="Premium">Premium</option>
+      </select>
+      <span>Records: {{orders.length}}</span>
+    </div>
+
     <table id="dataTable">
       <thead>
         <tr>
@@ -31,14 +49,48 @@
           <th>pizza</th>
           <th>size</th>
           <th>price</th>
+          <th>category</th>
           <th>delete</th>
-          <th></th>
+          <th>update</th>
         </tr>
       </thead>
-      <tbody id="libraryTable"></tbody>
+
+      <tbody>
+        <tr ng-repeat="o in orders">
+          <td><input ng-model="o.orderID"></td>
+          <td><input ng-model="o.customer"></td>
+          <td><input ng-model="o.pizza"></td>
+
+          <td>
+            <select ng-model="o.size">
+              <option value="Small">Small</option>
+              <option value="Medium">Medium</option>
+              <option value="Large">Large</option>
+            </select>
+          </td>
+
+          <td><input ng-model="o.price"></td>
+
+          <td>
+            <select ng-model="o.category">
+              <option value="Classic">Classic</option>
+              <option value="Special">Special</option>
+              <option value="Veggie">Veggie</option>
+              <option value="Premium">Premium</option>
+            </select>
+          </td>
+
+          <td>
+            <button class="delete-button" ng-click="deleteRecord(o._id)">Delete</button>
+          </td>
+
+          <td>
+            <button class="update-button" ng-click="updateRecord(o)">Update</button>
+          </td>
+        </tr>
+      </tbody>
     </table>
   </main>
-<script src="/client/js/config.js"></script>
-<script src="/client/js/view-data.js"></script>
 </body>
 </html>
+

@@ -10,132 +10,90 @@
 // global object that will hold the list of orders
 var jsonObject = [];
 
-main();
+var app = angular.module("viewDataApp", []);
 
-// main function that runs everything
-function main() {
-    console.log(jsonObject); // shows the whole object in the console
-    console.log(jsonObject.length); // shows how many items are in the list
-    console.log(JSON.stringify(jsonObject)); // shows the data as one long text
-    retrieveData();
-}
+app.controller("viewDataCtrl", function($scope, $http) {
 
-function retrieveData() {
+    $scope.orders = [];
+    $scope.selectedType = "ALL";
 
-    fetch(pizzaURL + "/get-records", {
-        method: "GET"
-    }) 
-    .then(response => {
-        if(!response.ok) {
-            throw new Error("Network response was not ok " + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.msg === "SUCCESS") {
-            createPizzaTable(data.fredData);
-        }
-    })
-    .catch(err => {
-        alert("Error: " + err);
-    });
-}
-
-function createPizzaTable(pizzaList) {
-    jsonObject = pizzaList || [];
-
-    console.log(jsonObject); 
-    console.log(jsonObject.length); 
-    console.log(JSON.stringify(jsonObject)); 
-
-    showTable();
-}
-
-function showTable() {
-    var htmlString = ""; 
-
-    for (var i = 0; i < jsonObject.length; i++) {
-        htmlString += "<tr>";
-        htmlString += "<td>" + jsonObject[i].orderID + "</td>";
-        htmlString += "<td>" + jsonObject[i].customer + "</td>";
-        htmlString += "<td>" + jsonObject[i].pizza + "</td>";
-        htmlString += "<td>" + jsonObject[i].size + "</td>";
-
-        var price = jsonObject[i].price;
-        if (typeof price === "number") {
-            price = price.toFixed(2);
-        }
-        htmlString += "<td>" + price + "</td>";
-    
-        htmlString += '<td><button class="delete-button" data-id="' + jsonObject[i]._id + '">Delete</button></td>';
-
-        htmlString += "</tr>";
-    }
-
-    var tableBodyObj = document.getElementById("libraryTable");
-    tableBodyObj.innerHTML = htmlString;
-
-    activateDelete();
-}
-
-function refreshTable() {
-    console.log("refreshTable() called");
-
-    var newOrder = { 
-        orderID: "ORD-2001", 
-        customer: "Agenor", 
-        pizza: "Diavola", 
-        size: "Large", 
-        price: 19.90 
-    };
-    jsonObject.push(newOrder);
-
-    var anotherOrder = {};
-    anotherOrder.orderID = "ORD-2002";
-    anotherOrder.customer = "Heloisa";
-    anotherOrder.pizza = "Funghi";
-    anotherOrder.size = "Medium";
-    anotherOrder.price = 16.75;
-
-    jsonObject.push(anotherOrder);
-
-    showTable();
-}
-
-// function from professor to activate delete buttons
-function activateDelete() {
-    // Capture all html items tagged with the delete-button class
-    const deleteButtons = document.querySelectorAll('.delete-button');
-
-    //Loop through all the deleteButtons and create a listener for each one
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const deleteID = this.getAttribute("data-id");  // <-- from the html button object
-            handleDelete(deleteID);  
+    //===========================================================
+    // GET: get all records (default)
+    //===========================================================
+    $scope.get_records = function() {
+        $http({
+            method: "get",
+            url: "/get-records"
+        }).then(function(response) {
+            if (response.data.msg === "SUCCESS") {
+                jsonObject = response.data.fredData;
+                $scope.orders = jsonObject;
+            } else {
+                alert(response.data.msg);
+            }
+        }, function(error) {
+            alert(error);
         });
-    });
-}
+    };
 
-// function to call the DELETE service on the server
-function handleDelete(deleteID) {
+    //===========================================================
+    // GET: get records by type (category)
+    //===========================================================
+    $scope.getByType = function() {
+        $http({
+            method: "get",
+            url: "/get-recordsByType",
+            params: { type: $scope.selectedType }
+        }).then(function(response) {
+            if (response.data.msg === "SUCCESS") {
+                jsonObject = response.data.fredData;
+                $scope.orders = jsonObject;
+            } else {
+                alert(response.data.msg);
+            }
+        }, function(error) {
+            alert(error);
+        });
+    };
 
-    fetch(pizzaURL + "/delete-record?recordID=" + deleteID, {
-        method: "DELETE"
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Network response was not ok " + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.msg === "SUCCESS") {
-            retrieveData();
-        } else {
-            alert("Error: " + (data.error || "Unknown error"));
-        }
-    })
-    .catch(err => {
-        alert("Error: " + err);
-    });
-}
+    //===========================================================
+    // DELETE: delete-record
+    //===========================================================
+    $scope.deleteRecord = function(deleteID) {
+        $http({
+            method: "delete",
+            url: "/delete-record",
+            params: { recordID: deleteID }
+        }).then(function(response) {
+            if (response.data.msg === "SUCCESS") {
+                $scope.getByType();   // refresh current filter
+            } else {
+                alert(response.data.msg);
+            }
+        }, function(error) {
+            alert(error);
+        });
+    };
+
+    //===========================================================
+    // PUT: update-record
+    //===========================================================
+    $scope.updateRecord = function(orderObj) {
+        $http({
+            method: "put",
+            url: "/update-record",
+            data: orderObj
+        }).then(function(response) {
+            if (response.data.msg === "SUCCESS") {
+                $scope.getByType();   // refresh current filter
+            } else {
+                alert(response.data.msg);
+            }
+        }, function(error) {
+            alert(error);
+        });
+    };
+
+    // initial load
+    $scope.get_records();
+});

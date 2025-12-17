@@ -21,13 +21,17 @@ var services = function(app) {
         var sizeSentFromClient     = req.body.size;
         var priceSentFromClient    = req.body.price;
 
+        // TYPE field (assignment requirement) - used by many records
+        var categorySentFromClient = req.body.category;
+
         //2. Create JSON with data to be inserted
         var newPizzaOrder = {
             orderID:  orderIDSentFromClient,
             customer: customerSentFromClient,
             pizza:    pizzaSentFromClient,
             size:     sizeSentFromClient,
-            price:    priceSentFromClient
+            price:    priceSentFromClient,
+            category: categorySentFromClient
         };
 
         //3. Connect and insert data, close database, return success or failure
@@ -65,6 +69,89 @@ var services = function(app) {
 
             await conn.close();
             return res.json({ msg: "SUCCESS", fredData: pizzaData });
+
+        } catch (err) {
+            return res.json({ msg: "Error: " + err });
+        }
+
+    });
+
+    //=============================================================================================
+    // GET: get-recordsByType  (get pizza orders by category/type)
+    //=============================================================================================
+    app.get('/get-recordsByType', async function(req, res) {
+
+        //1. Bring in type from client (query string)
+        var typeSentFromClient = req.query.type;   // expected: ALL or a category string
+
+        //2. If ALL (or blank), return all. Otherwise search by category
+        var search = {};
+        if (typeSentFromClient && typeSentFromClient !== "ALL") {
+            search = { category: typeSentFromClient };
+        }
+
+        //3. Sort results
+        const orderBy = { orderID: 1 };
+
+        //4. Connect, find data, close database, return results or error 
+        try {
+            const conn = await client.connect();
+            const db   = conn.db("pizzaria");
+            const coll = db.collection("orders");
+
+            const pizzaData = await coll.find(search).sort(orderBy).toArray();
+
+            await conn.close();
+            return res.json({ msg: "SUCCESS", fredData: pizzaData });
+
+        } catch (err) {
+            return res.json({ msg: "Error: " + err });
+        }
+
+    });
+
+    //=============================================================================================
+    // PUT: update-record  (update one pizza order by _id)
+    //=============================================================================================
+    app.put('/update-record', async function(req, res) {
+
+        //1. Bring in the data from the client
+        var idSentFromClient       = req.body._id;
+        var orderIDSentFromClient  = req.body.orderID;
+        var customerSentFromClient = req.body.customer;
+        var pizzaSentFromClient    = req.body.pizza;
+        var sizeSentFromClient     = req.body.size;
+        var priceSentFromClient    = req.body.price;
+        var categorySentFromClient = req.body.category;
+
+        //2. Convert id string to a Mongo ObjectId
+        var idAsMongoObject = ObjectId.createFromHexString(idSentFromClient);
+
+        //3. Create search with MongoID
+        const search = { _id: idAsMongoObject };
+
+        //4. Create JSON object of updated values
+        const updateData = {
+            $set: {
+                orderID:  orderIDSentFromClient,
+                customer: customerSentFromClient,
+                pizza:    pizzaSentFromClient,
+                size:     sizeSentFromClient,
+                price:    priceSentFromClient,
+                category: categorySentFromClient
+            }
+        };
+
+        //5. Connect and update data, close database, return success or failure
+        try {
+            const conn = await client.connect();
+            const db   = conn.db("pizzaria");
+            const coll = db.collection("orders");
+
+            await coll.updateOne(search, updateData);
+
+            await conn.close();
+            return res.json({ msg: "SUCCESS" });
 
         } catch (err) {
             return res.json({ msg: "Error: " + err });

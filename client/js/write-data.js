@@ -17,8 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     var pizza = document.getElementById("pizza").value;
     var size = document.getElementById("size").value;
     var price = document.getElementById("price").value;
+    var category = document.getElementById("category").value;
 
-    if (!orderId || !customer || !pizza || !size || !price) {
+    if (!orderId || !customer || !pizza || !size || !price || !category) {
       alert("Please fill in all fields before submitting");
       return;
     }
@@ -29,7 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
       customer: customer,
       pizza: pizza,
       size: size,
-      price: price
+      price: price,
+      category: category
     };
 
     fetch(pizzaURL + "/write-record", {
